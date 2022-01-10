@@ -46,4 +46,4 @@ if __name__ == '__main__':
 
     tmp = FromRealSimulation(x, y, kin_from)
     tmp_sim  = tmp.simulate()
-    print tmp_sim
+    print(tmp_sim)

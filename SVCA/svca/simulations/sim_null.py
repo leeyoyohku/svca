@@ -21,7 +21,8 @@ def run(data_dir, protein_index, output_dir, bootstrap_index,
     # import pdb; pdb.set_trace()
     protein_name = protein_names[protein_index, :]
     phenotype = phenotypes[:, protein_index]
-    sel = range(phenotypes.shape[1])
+    sel = list(range(phenotypes.shape[1]))
+    #import pdb; pdb.set_trace()
     sel.remove(protein_index)
     kin_from = phenotypes[:, sel]
     N_samples = X.shape[0]
@@ -62,15 +63,15 @@ def run(data_dir, protein_index, output_dir, bootstrap_index,
     for i in range(5):
         if i == 0:
             int_bk = int_param
-            env_bk = env_param
+            local_bk = env_param
             noise_bk = noise_param
             scale_interactions = True
         else:
             int_bk = int_param * s.random.uniform(0.8, 1.2, len(int_param))
-            local_bk = local_param * s.random.uniform(0.8, 1.2, len(env_param))
+            local_bk = env_param * s.random.uniform(0.8, 1.2, len(env_param))
             noise_bk = noise_param * s.random.uniform(0.8, 1.2, len(noise_param))
             scale_interactions = False
-        model.set_initCovs({'intrinsic': dir_bk,
+        model.set_initCovs({'intrinsic': int_bk,
                         'noise': noise_bk,
                         'environmental':local_bk})
         if scale_interactions:
@@ -87,9 +88,9 @@ def run(data_dir, protein_index, output_dir, bootstrap_index,
     model.gp.setParams(saved_params)
     file_prefix = protein_name[0] + '_' + str(bootstrap_index) + '_interactions'
     write_variance_explained(model, output_dir, file_prefix)
-    #write_r2(model, output_dir, file_prefix)
+    write_r2(model, output_dir, file_prefix)
     write_LL(model, output_dir, file_prefix)
-    # write_Ks(model, output_dir, file_prefix)
+    write_Ks(model, output_dir, file_prefix)
 
 
 if __name__ == '__main__':
